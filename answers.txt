@@ -1,0 +1,47 @@
+## Place your answers here.
+
+Exercise 2:
+    exploit-2a.py
+	Bug Exploited: [http.c:104]. This overflow overwrites the return address of the function <process_client>.
+	How: By passing a request URI whose length is greater than 1536 and large enough to overwrite the return address in the stack.
+
+    exploit-2b.py
+	Bug Exploited: [http.c:281] This overflow overwrites the address of the handler <http_serve_none>.
+	How: By passing a request URI whose length is greater than 1024.
+
+
+Exercise 3:
+    I have exploited the first vulnerability mentioned in <bugs.txt>[zookd.c:73]. Since <reqpath> has a buffer size of 1536, so we can overflow its buffer and change the return address of the function <process_client>. When I attched the threads to gdb(and set a breakpoint at the function <process_client> because <reqpath> is declared inside this function), I found out that the buffer of <reqpath> had the memory address of 0xbffff008. Also, the return address of the function was being stored at the address(0xbffff618 + 0x4). Now, we can put shellcode at the address (0xbffff008 + 0x1) because the first character of the <reqpath> variable is always </>. Accordingly, I calculated the padding which I needed to put in the buffer of <reqpath> and beyond. At last, I replaced the value stored at the return adress of the function by the value (0xbffff008 + 0x1) which is the starting of our shellcode.
+
+In the same manner all other buffer overflow vulnerabilities mentioned in <bugs.txt> can be exploited. In all the exploits, we can overwrite the return address of the function(inside which the variables(whose buffers are being overflown) are declared) with the memory address where shellcode is stored. 
+
+Exercise 4:
+    exploit-4a.py
+	Bug exploited: [http.c:104]. This overflow overwrites the return address of the function <process_client>.
+
+    exploit-4b.py
+	Bug Exploited: [http.c:281] This overflow overwrites the address of the handler <http_serve_none>.
+
+    Other bugs mentioned in <bugs.txt> can be exploited in the same manner:
+    	[http.c:164] Here, we overflow <envvar> variable. This exploit would be very similar to the exploit <exploit-4a.py>. The only difference would be that in <exploit-4a.py>, the buffer to be overflowed was the first one to be declared inside the function while in this case, the buffer of <envvar> is declared after <int i;>. So, we just need to pad 4 more bytes inh this case with some random value and then overwrite the written address of the function. So, this buffer overflow can be exploited in the same manner as the exploit <exploit-4a.py>.
+
+    	[http.c:94] The vulnerebility here can be exploited in the same manner as above. In this case, instead of a single <int>, we'll need to overwrite the buffer of <reqpath> with some random padding.
+
+	[http.c:157] This vulnerebility too can be exploited in the same manner. In this case, we need to fill the buffer of <envvar> and <int> with some random padding. So, a calculated amount of padding will o the work for us.
+
+
+Exercise 5:
+    Attack 1: When a HTTP request is made to the server, it checks if the request demands for a file and if the file is present, server simply serves the file. There is no authentication whether the user is eligible to demand that file or not. So, a malicious user can send a request like "/http.c" and the content of the file would be sent to him in the form of response. Similarly, the user can view any file stored in the server.
+	Limitations: If the zookbar server is run as as user <httpd>, none of the files for which <httpd> doesn't have view permission will be served to a malicious user.
+	What can be accomplished? A malicious user can get all the files of the server and find vulnerebilities in the code and can exploit them. Also, user can view the data of other users which is meant to be private.
+	Why it works? Already explained in the description of attack.
+	How to fix/prevent it? We can add a module to the code base which checks if a particular user is authorized to view a file he/she/xhe has demanded. If the user is not authorized, send a forbidden messsage to him/her/xer.
+
+    Attack 2: If any user makes a HTTP request without newline(<\n>) character in it, the read() function call from the function <http_read_line()> will block(Since, it's a blocking call) and the server will not accept any new incoming connections(requests), thus resulting in denial of service(DoS). This will make the website non-functional.
+	Limitations:
+	What can be accomplished? Since it's a DoS attack, the website will become unusable and none of the users would be able to use it.
+	Why it works? Already explained in the description of attack.
+	How to fix/prevent it? It can be prevented my making the read function call non-blocking. This can be done by using the following piece of code:
+		int flags = fcntl(fd, F_GETFL, 0);
+		fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+	This will make the read() call non-blocking and the call to read() will throw an error when it has nothing to read and this error can be captured easily.

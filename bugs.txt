@@ -1,0 +1,29 @@
+#
+# [file:#lines]
+# desc
+#
+
+[http.c:104]
+We can overflow the <reqpath> variable. The buffer size of <reqpath> is 1536. Inside the function <http_request_line> in the file <http.c> when the function <url_decode> is called, then <sp1> points to the start of request URI. So, we can overflow <reqpath> by passing a large enough URI in the request. This vulnerebility can be exploted by passing a request URI whose length is greater than 1536. This vulnerebility can be prevented using stack canaries.
+
+    url_decode(reqpath, sp1);
+
+[http.c:94]
+We can overflow the <env> variable by passing a large URI. <envp> points to <env> which has a buffer size of 4096. In the code <envp> keeps on appending different parts of the request URI to itself. Along with this, <envp> also appends phrases like <REQUEST_METHOD=>, <SERVER_PROTOCOL=>, <REQUEST_URI=>, etc. The code doesn't check what the protocol is and simply copies it to <envp> at [http.c:94]. So, if we send a long(~4070 length) random protocol in the request, we can overflow the <env> variable. If we use stack canaries, we can prevent the return address of the function <process_client> from being altered but the variable <reqpath> could still be changed. But a hacker can't gain anything by changing it. So, this vulnerebility can be prevented using stack canaries. 
+
+    envp += sprintf(envp, "SERVER_PROTOCOL=%s", sp2) + 1;
+
+[http.c:157]
+Inside the header, we send different key-value pairs. <http_request_headers> reads these headers one line at a time(one key-value pair at a time) and <url-decode> function decodes the value pointed by <sp> to a variable called <value>. Here, the buffer size of <value> is 1024. So, if we send a key-value pair in the header in which the length of value is large(>1024), it will lead to buffer overfloww of <value>. For exploiting this vulnerebility, we can send a header(a key-value pair) along with request URI where the value field would be a random string whose length is greater than 1024. Similar to the previous bug, this vulnerebility too can be prevented using stack canaries. 
+
+    url_decode(value, sp);
+
+[http.c:164]
+We can overflow the buffer of <envvar> by sending a key-value pair as header such that the length of key would be very large. This key would initially be stored in <buf>, which has a buffer siz of 4096 implying that it can store a lagre key. Now, when the value stored in <buf> is copied to <envvar>(whose buffer size is 1024) using <sprintf>, it would lead to buffer overflow. For exploiting this vulnerebility, we can send a header(a key-value pair) along with request URI where the key field would be a random string whose length is greater than 1024. Similar to the previous bug, this vulnerebility too can be prevented using stack canaries. 
+
+    sprintf(envvar, "HTTP_%s", buf);
+
+[http.c:281]
+A string is passed to <name> using <getenv("REQUEST_URI")>. If we make the request URI long enough, then the length of <name> would be a large value. When this <name> would be copied in pn(which has a buffer size of 1024), it would be a case of buffer overflow of <pn>. This vulnerebility can be exploted by passing a request URI whose length is greater than 1024. If we use stack canaries, we can prevent the return address of the function <http_serve> from being altered but the <http_serve_none> handler's address can still be modified. So, this vulnerebility can't be prevented using stack canaries.
+
+    strcat(pn, name);
