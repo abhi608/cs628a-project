@@ -152,24 +152,13 @@ pid_t launch_svc(CONF *conf, const char *name)
             return -1;
         }
 
+        /* change working path to "/" */
         if(chdir("/")){
             warnx("error during chdir");
             return -1;
         }
     }
 
-    //if (NCONF_get_number_e(conf, name, "uid", &uid))
-    //{
-        /* change real, effective, and saved uid to uid */
-        //warnx("setuid %ld", uid);
-    //}
-
-    //if (NCONF_get_number_e(conf, name, "gid", &gid))
-    //{
-        /* change real, effective, and saved gid to gid */
-        //warnx("setgid %ld", gid);
-    //}
-    
     if (NCONF_get_number_e(conf, name, "gid", &gid))
     {
         /* change real, effective, and saved gid to gid */
@@ -184,15 +173,9 @@ pid_t launch_svc(CONF *conf, const char *name)
         /* set the grouplist to gids */
         for (i = 0; i < ngids; i++)
             warnx("extra gid %d", gids[i]);
+        /* set group ids */
         setgroups(ngids,gids);
     }
-
-    //if (NCONF_get_number_e(conf, name, "gid", &gid))
-    //{
-        /* change real, effective, and saved gid to gid */
-        //warnx("setgid %ld", gid);
-        //setresgid(gid,gid,gid);
-    //}
 
     if (NCONF_get_number_e(conf, name, "uid", &uid))
     {
@@ -200,20 +183,6 @@ pid_t launch_svc(CONF *conf, const char *name)
         warnx("setuid %ld", uid);
         setresuid(uid,uid,uid);
     }
-
-    //if ((dir = NCONF_get_string(conf, name, "dir")))
-    //{
-        /* chroot into dir */
-        //if(chroot(dir)){
-            //warnx("error during chroot!");
-            //return -1;
-        //}
-
-        //if(chdir("/")){
-            //warnx("error during chdir");
-            //return -1;
-        //}
-    //}
 
     signal(SIGCHLD, SIG_DFL);
     signal(SIGPIPE, SIG_DFL);
