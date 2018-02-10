@@ -427,11 +427,6 @@ def main():
         check_fs()
         #Exercise 11
         check_profileapi_uid()
-        #Challenge 2
-        check_myprofile()
-        #Challenge 3
-        if check_profile_service():
-            log(green("PASS"), "Challenge: profile column not in person db")
 
 
 
