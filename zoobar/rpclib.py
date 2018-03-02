@@ -78,6 +78,7 @@ class RpcClient(object):
 
     def call(self, method, **kwargs):
         self.sock.sendall(format_req(method, kwargs) + '\n')
+        #log(self.lines)
         return parse_resp(self.lines.next())
 
     def close(self):

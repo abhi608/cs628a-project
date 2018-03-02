@@ -60,6 +60,9 @@ create_socket_dir /jail/echosvc 61010:61010 755
 #------------auth_svc for exercise-5----------------------------
 create_socket_dir /jail/authsvc 61016:61016 755 
 #---------------------------------------------------------------
+#------------bank_svc for exercise-7----------------------------
+create_socket_dir /jail/banksvc 61017:61017 755
+#---------------------------------------------------------------
 mkdir -p /jail/tmp
 chmod a+rwxt /jail/tmp
 
@@ -74,6 +77,9 @@ python /jail/zoobar/zoodb.py init-transfer
 #------------auth_svc for exercise-5----------------------------
 python /jail/zoobar/zoodb.py init-cred
 #---------------------------------------------------------------
+#------------bank_svc for exercise-7----------------------------
+python /jail/zoobar/zoodb.py init-bank
+#---------------------------------------------------------------
 
 #---------------Exercise3----------------------------------------
 #set_perms 61012:61012 755 /jail/zoobar/db/person
@@ -86,9 +92,11 @@ python /jail/zoobar/zoodb.py init-cred
 set_perms 61014:61014 770 /jail/zoobar/db/person
 set_perms 61014:61014 770 /jail/zoobar/db/transfer
 set_perms 61016:61016 700 /jail/zoobar/db/cred
+set_perms 61017:61017 700 /jail/zoobar/db/bank
 set_perms 61014:61014 660 /jail/zoobar/db/person/person.db
 set_perms 61014:61014 660 /jail/zoobar/db/transfer/transfer.db
 set_perms 61016:61016 650 /jail/zoobar/db/cred/cred.db
+set_perms 61017:61017 650 /jail/zoobar/db/bank/bank.db
 set_perms 61015:61015 755 /jail/zoobar/index.cgi
 #chown 61015:61015 /jail/zoobar/index.cgi
 #----------------------------------------------------------------
