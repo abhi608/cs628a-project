@@ -10,11 +10,12 @@ def setup(username):
     }
     return client_connect.call('setup', **obj)
 
-def transfer(sender, recipient, zoobars):
+def transfer(sender, recipient, zoobars, token):
     obj = {
         'sender' : sender,
         'recipient' : recipient,
-        'zoobars' : zoobars
+        'zoobars' : zoobars,
+        'token' : token
     }
     return client_connect.call('transfer', **obj)
 

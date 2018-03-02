@@ -5,6 +5,7 @@
 import rpclib
 import sys
 import bank
+import auth_client
 from debug import *
 from sqlalchemy.orm import class_mapper
 
@@ -14,8 +15,12 @@ class BankRpcServer(rpclib.RpcServer):
     def rpc_setup(self, username):  
         bank.setup(username)
 
-    def rpc_transfer(self, sender, recipient, zoobars):
-        return bank.transfer(sender, recipient, zoobars)
+    def rpc_transfer(self, sender, recipient, zoobars, token):
+        #return bank.transfer(sender, recipient, zoobars)
+        if auth_client.check_token(sender, token):
+            return bank.transfer(sender, recipient, zoobars)
+        else:
+            raise ValueError()
 
     def rpc_balance(self, username):
         return bank.balance(username)

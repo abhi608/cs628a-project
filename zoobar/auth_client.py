@@ -2,14 +2,13 @@ from debug import *
 from zoodb import *
 import rpclib
 
-client_connect = rpclib.client_connect("/authsvc/sock")
-
 def login(username, password):
     ## Fill in code here.
     obj = {
         'username' : username,
         'password' : password
     }
+    client_connect = rpclib.client_connect("/authsvc/sock")
     return client_connect.call('login', **obj)
 
 def register(username, password):
@@ -18,6 +17,7 @@ def register(username, password):
         'username' : username,
         'password' : password 
     }
+    client_connect = rpclib.client_connect("/authsvc/sock")
     return client_connect.call('register', **obj)
 
 def check_token(username, token):
@@ -26,4 +26,5 @@ def check_token(username, token):
         'username' : username,
         'token' : token
     }
+    client_connect = rpclib.client_connect("/authsvc/sock")
     return client_connect.call('check_token', **obj)
