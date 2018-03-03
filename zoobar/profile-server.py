@@ -20,6 +20,8 @@ class ProfileAPIServer(rpclib.RpcServer):
     def __init__(self, user, visitor):
         self.user = user
         self.visitor = visitor
+        os.setgid(61014)
+        os.setuid(61017)
 
     def rpc_get_self(self):
         return self.user
@@ -59,7 +61,11 @@ class ProfileServer(rpclib.RpcServer):
         # uid = 0
         uid = 61018
         userdir = '/tmp'
-
+        log(user)
+        userdir += user.replace(".","-").replace("/","_")
+        if not os.path.exists(userdir):
+            os.mkdir(userdir)
+            os.chmod(userdir, 0330)
         (sa, sb) = socket.socketpair(socket.AF_UNIX, socket.SOCK_STREAM, 0)
         pid = os.fork()
         if pid == 0:
