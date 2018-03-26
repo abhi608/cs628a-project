@@ -65,7 +65,7 @@ class ProfileServer(rpclib.RpcServer):
         userdir += user.replace(".","-").replace("/","_")
         if not os.path.exists(userdir):
             os.mkdir(userdir)
-            os.chmod(userdir, 0330)
+            os.chmod(userdir, 600)
         (sa, sb) = socket.socketpair(socket.AF_UNIX, socket.SOCK_STREAM, 0)
         pid = os.fork()
         if pid == 0:
