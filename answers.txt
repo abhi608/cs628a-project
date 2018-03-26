@@ -38,10 +38,26 @@ Exercise 5:
 	How to fix/prevent it? We can add a module to the code base which checks if a particular user is authorized to view a file he/she/xhe has demanded. If the user is not authorized, send a forbidden messsage to him/her/xer.
 
     Attack 2: If any user makes a HTTP request without newline(<\n>) character in it, the read() function call from the function <http_read_line()> will block(Since, it's a blocking call) and the server will not accept any new incoming connections(requests), thus resulting in denial of service(DoS). This will make the website non-functional.
-	Limitations:
+	Limitations: If, at network layer, there is a check deployed to test whether an incoming HTTP request is framed properly or not, then the problem with the request(not having any \n character) can be detected there and then and the request can be blocked. Since the request is not able to reach application layer, there would be no effect on server.
 	What can be accomplished? Since it's a DoS attack, the website will become unusable and none of the users would be able to use it.
 	Why it works? Already explained in the description of attack.
 	How to fix/prevent it? It can be prevented my making the read function call non-blocking. This can be done by using the following piece of code:
 		int flags = fcntl(fd, F_GETFL, 0);
 		fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 	This will make the read() call non-blocking and the call to read() will throw an error when it has nothing to read and this error can be captured easily.
+
+Exercise 6:
+    [http.c:104]
+	Changing the buffer size of <reqpath> variable to 4096 fixed this bug. This is because the request string is copied to <reqpath> from a variable <buf> whose maximum size is 4096(and this <buf> variable can't overflow because of the way characters are copied in it).
+
+    [http.c:94]
+	Changing the buffer size of <env> to 6500 fixed this bug. At the time of execution, different parts of a URI request(max. length 4096) are appended to <env> under different keys like "REQUEST_METHOD=" and this makes the content of <env> exceed the length of 4096. So, increasing the buffer size of <env> to a large enough size(6500) fixed this issue.
+
+    [http.c:157]
+	Changing the buffer size of <value> to 4096 fixed this bug. As stated in <bugs.txt>, headers are in the form of key-value pair. The max size of the value field can be ~4096(because the <buf> that reads this header from socket has a size of 4096). So, increasing the buffer size of <value> to 4096 fixed this bug.
+
+    [http.c:164]
+	Changing the buffer size of <envvar> to 4096 fixed this bug. As stated in <bugs.txt>, headers are in the form of key-value pair. The max size of the key field can be ~4096(because the <buf> that reads this header from socket has a size of 4096). So, increasing the buffer size of <envvar> to 4096 fixed this bug.
+
+    [http.c:281]
+	Changing the buffer size of <pn> to 4096 fixed this bug. A string is passed to <name> using <getenv("REQUEST_URI")>(whose maximum length can be ~4096). When this <name> would be copied in pn(which had a buffer size of 1024), it created a case of buffer overflow of <pn>. Simply increasing the buffer size of <pn> to 4096 fixed this issue.

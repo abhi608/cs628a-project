@@ -113,8 +113,8 @@ const char *http_request_line(int fd, char *reqpath, char *env, size_t *env_len)
 const char *http_request_headers(int fd)
 {
     int i;
-    char envvar[1024];
-    char value[1024];
+    char envvar[4096];
+    char value[4096];
     char buf[4096];                
             
     /* For lab 2: don't remove this line. */
@@ -271,7 +271,7 @@ valid_cgi_script(struct stat *st)
 void http_serve(int fd, const char *name)
 {
     void (*handler)(int, const char *) = http_serve_none;
-    char pn[1024];
+    char pn[4096];
     struct stat st;
 
     getcwd(pn, sizeof(pn));

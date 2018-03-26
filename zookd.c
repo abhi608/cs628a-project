@@ -60,8 +60,8 @@ int main(int argc, char **argv)
 
 static void process_client(int fd)
 {
-    char reqpath[1536];
-    char env[4096];
+    char reqpath[4096];
+    char env[6500];
     size_t env_len;
     
     const char *errmsg;
